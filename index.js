@@ -26,15 +26,15 @@ app.post('/', (req, res) => {
   read((error, films) => {
     if (!error) {
       films.push(req.body)
-        write(films, (error) => {
-          if (!error) {
+      write(films, (error) => {
+        if (!error) {
           res.send(films)
         } else {
           res.status(500).send({
             error: error.message
           })
         }
-     })
+      })
     } else {
       res.status(500).send({
         error: error.message
@@ -44,7 +44,25 @@ app.post('/', (req, res) => {
 })
 
 app.delete('/:index', (req, res) => {
-
+  console.log(`delete : ${req.params.index}`)
+  read((error, films) => {
+    if (!error) {
+      films.splice(req.params.index, 1)
+      write(films, (error) => {
+        if (!error) {
+          res.send(films)
+        } else {
+          res.status(500).send({
+            error: error.message
+          })
+        }
+      })
+    } else {
+      res.status(500).send({
+        error: error.message
+      })
+    }
+  })
 })
 
 app.listen(PORT, () => {
@@ -58,7 +76,7 @@ function read(done) {
 }
 
 function write(films, done) {
-  fs.writeFile('./films.json', JSON.stringify(films, null, 2), (error) => {
+  fs.writeFile('./films.json', JSON.stringify(films, null, 2) + "\n", (error) => {
     done(error)
   })
 }
