@@ -53,7 +53,7 @@ app.listen(PORT, () => {
 
 function read(done) {
   fs.readFile('./films.json', (error, data) => {
-    done(error, JSON.parse(data))
+    done(error, !error ? JSON.parse(data): '[]')
   })
 }
 
