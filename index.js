@@ -10,6 +10,7 @@ app.use(express.json())
 app.use(parser.json())
 
 app.get('/', (req, res) => {
+  console.log("> get")
   read((error, films) => {
     if (!error) {
       res.send(films)
@@ -22,7 +23,7 @@ app.get('/', (req, res) => {
 })
 
 app.post('/', (req, res) => {
-  console.log(JSON.stringify(req.body, null, 2))
+  console.log("> post\n" + JSON.stringify(req.body, null, 2))
   read((error, films) => {
     if (!error) {
       films.push(req.body)
@@ -43,8 +44,31 @@ app.post('/', (req, res) => {
   })
 })
 
+app.put('/:index', (req, res) => {
+  console.log(`>update : ${req.params.index}`)
+  console.log(JSON.stringify(req.body, null, 2))
+  read((error, films) => {
+    if (!error) {
+      films[req.params.index] = req.body;
+      write(films, (error) => {
+        if (!error) {
+          res.send(films)
+        } else {
+          res.status(500).send({
+            error: error.message
+          })
+        }
+      })
+    } else {
+      res.status(500).send({
+        error: error.message
+      })
+    }
+  })
+})
+
 app.delete('/:index', (req, res) => {
-  console.log(`delete : ${req.params.index}`)
+  console.log(`> delete : ${req.params.index}`)
   read((error, films) => {
     if (!error) {
       films.splice(req.params.index, 1)
